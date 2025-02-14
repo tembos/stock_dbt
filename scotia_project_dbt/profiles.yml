@@ -1,12 +1,11 @@
 scotia_project_dbt:
   target: dev
   outputs:
-    dev:
+    cicd:
       dataset: stocks
       job_execution_timeout_seconds: 200
       job_retries: 1
       impersonate_service_account: dbt-service-account@bigquerysheets-404104.iam.gserviceaccount.com
-
       location: US
       method: oauth
       priority: interactive
@@ -15,4 +14,16 @@ scotia_project_dbt:
       type: bigquery
       seed:
         data_format: csv
-
+    dev:
+      dataset: stocks
+      job_execution_timeout_seconds: 200
+      job_retries: 1
+      location: US
+      method: service-account
+      keyfile: dbt_service_account.json
+      priority: interactive
+      project: bigquerysheets-404104
+      threads: 2
+      type: bigquery
+      seed:
+        data_format: csv
