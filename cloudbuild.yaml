@@ -9,21 +9,12 @@ steps:
       - name: 'shared-volume'
         path: '/workspace1'
 
-#  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-#    entrypoint: "bash"
+#  - name: "gcr.io/cloud-builders/docker"
 #    args:
-#      - "-c"
-#      - |
-#        gcloud auth activate-service-account \
-#          --impersonate-service-account=479749472840-compute@developer.gserviceaccount.com
-#        gcloud auth list
-
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      - "build"
-      - "-t"
-      - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-      - "scotia_project_dbt/"
+#      - "build"
+#      - "-t"
+#      - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
+#      - "scotia_project_dbt/"
 #
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     entrypoint: 'bash'
@@ -33,13 +24,8 @@ steps:
       - '-c'
       - |
         cp /workspace1/dbt_service_account.json .
-        cat dbt_service_account.json
-        ls
-        chmod 777 dbt_service_account.json
+        dbt seed --select source_nvda && dbt run --select source_nvda &&  dbt run --select stg_nvda && dbt show --select stg_nvda && dbt run --select ohlc_nvda && dbt show --select ohlc_nvda  && dbt test --select dwh_vs_expected --store-failures
 
-
-        env
-        dbt debug
     volumes:
       - name: 'shared-volume'
         path: '/workspace1'
