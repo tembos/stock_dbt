@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: stocks_raw
+    database: bigquerysheets-404104
+    schema: stocks_raw
+    tables:
+      - name: source_nvda
+        description: "Raw stock prices from Airflow DAG"

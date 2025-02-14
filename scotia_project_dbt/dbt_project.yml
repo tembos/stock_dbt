@@ -1,0 +1,49 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'scotia_project_dbt'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'scotia_project_dbt'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+#tests:
+#  +severity: warn
+
+models:
+  scotia_project_dbt:
+
+    staging:
+      +schema: staging
+
+      stg_nvda:
+        tags: ['nvda']
+
+
+    warehouse:
+      +schema: warehouse
+      ohlc_nvda:
+        tags: ['nvda']
+
+#    expected_data:
+#      +schema: warehouse
+#      +enabled: "{{ target.name == 'dev' }}"
+
+    test:
+      +schema: dbt_test_failures

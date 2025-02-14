@@ -1,0 +1,3 @@
+datetime,open,high,low,close,volume,meta,ingestion_datetime_utc,batch_id
+2025-02-06 15:58:00,128,130,129,128,10000,"{""symbol"": ""NVDA"", ""interval"": ""1min"", ""currency"": ""USD"", ""exchange_timezone"": ""America/New_York"", ""exchange"": ""NASDAQ"", ""mic_code"": ""XNGS"", ""type"": ""Common Stock""}",2025-02-12 11:40:36.586424-05:00,"batchid1"
+2025-02-06 15:59:00,128,128,126,126,10000,"{""symbol"": ""NVDA"", ""interval"": ""1min"", ""currency"": ""USD"", ""exchange_timezone"": ""America/New_York"", ""exchange"": ""NASDAQ"", ""mic_code"": ""XNGS"", ""type"": ""Common Stock""}",2025-02-12 11:40:36.586424-05:00,"batchid2"

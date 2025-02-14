@@ -4,7 +4,7 @@ steps:
       - "build"
       - "-t"
       - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-      - "dbt/"
+      - "scotia_project_dbt/"
 
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     entrypoint: "bash"
