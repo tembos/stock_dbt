@@ -7,6 +7,7 @@ steps:
       - "scotia_project_dbt/"
 
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
+    dir: "scotia_project_dbt"
 #    entrypoint: "dbt"
     args:
       - "debug"
