@@ -4,13 +4,13 @@ import uuid
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.providers.google.cloud.hooks.gcs import GCSHook
-from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
-import pandas as pd
-from airflow.exceptions import AirflowException
-from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-
-from google.cloud import secretmanager
+# from airflow.providers.google.cloud.hooks.gcs import GCSHook
+# from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
+# import pandas as pd
+# from airflow.exceptions import AirflowException
+# from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+#
+# from google.cloud import secretmanager
 import pendulum
 
 SYMBOL = "NVDA"

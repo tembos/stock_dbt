@@ -15,7 +15,7 @@ steps:
       - '-c'
       - |
         export GOOGLE_APPLICATION_CREDENTIALS="/workspace/scotia_project_dbt/dbt_service_account.json"
-        dbt debug --config-dir /workspace/scotia_project_dbt
+        dbt debug 
 
 timeout: 1200s
 
