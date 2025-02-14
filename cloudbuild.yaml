@@ -7,25 +7,20 @@ steps:
       - "scotia_project_dbt/"
 
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-    entrypoint: 'bash'
+    entrypoint: "bash"
     args:
-      - '-c'
+      - "-c"
       - |
-        echo "$$DBT_SERVICE_ACCOUNT" > /workspace/dbt_service_account.json
+        echo "$DBT_SERVICE_ACCOUNT" > /workspace/dbt_service_account.json
         export GOOGLE_APPLICATION_CREDENTIALS="/workspace/dbt_service_account.json"
-        dbt debug --profiles-dir /workspace
-
-#  - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-#    dir: "scotia_project_dbt"
-#    entrypoint: 'dbt'
-#    args:
-#      - "debug"
+        cd /workspace/scotia_project_dbt  # Ensure you're in the project directory
+        ls -la  # Debugging step: check if files are present
+        dbt debug --profiles-dir .
 
 timeout: 1200s
 
 images:
   - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-
 
 options:
   logging: CLOUD_LOGGING_ONLY
