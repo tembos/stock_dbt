@@ -31,10 +31,11 @@ steps:
       - '-c'
       - |
         cp /workspace1/dbt_service_account.json .
+        cat dbt_service_account.json
         ls
         chmod 777 dbt_service_account.json
         export GOOGLE_APPLICATION_CREDENTIALS="dbt_service_account.json"
-        echo "GOOGLE_APPLICATION_CREDENTIALS"
+        echo "GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS"
         dbt debug
     volumes:
       - name: 'shared-volume'
