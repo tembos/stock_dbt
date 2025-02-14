@@ -5,6 +5,7 @@ steps:
       - '-c'
       - |
         gcloud secrets versions access 1 --secret="dbt_service_account" --format="json" > /workspace1/dbt_service_account.json
+
     volumes:
       - name: 'shared-volume'
         path: '/workspace1'
@@ -19,16 +20,29 @@ steps:
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     entrypoint: 'bash'
     dir: "scotia_project_dbt"
-
+    env:
+      - "GOOGLE_APPLICATION_CREDENTIALS=/workspace1/dbt_service_account.json"  # ✅ Set Service Account JSON path
     args:
       - '-c'
       - |
         cp /workspace1/dbt_service_account.json .
-        dbt seed --select source_nvda && dbt run --select source_nvda &&  dbt run --select stg_nvda && dbt show --select stg_nvda && dbt run --select ohlc_nvda && dbt show --select ohlc_nvda  && dbt test --select dwh_vs_expected --store-failures
+        export GOOGLE_APPLICATION_CREDENTIALS="/workspace1/dbt_service_account.json"
+        dbt debug
+        dbt seed --select source_nvda
+        dbt run --select source_nvda
+        dbt run --select stg_nvda
+        dbt run --select ohlc_nvda
+        dbt test --select dwh_vs_expected --store-failures
 
     volumes:
       - name: 'shared-volume'
         path: '/workspace1'
+
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args:
+      - 'cp'
+      - 'dags/*'
+      - 'gs://us-central1-testscotia2-4832ea9b-bucket/dags/'
 
 timeout: 1200s
 
