@@ -12,9 +12,6 @@ steps:
       - "-c"
       - |
         gcloud auth application-default login --quiet
-        gcloud auth application-default print-access-token
-        gcloud config set project bigquerysheets-404104
-        gcloud auth list
 
 
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
