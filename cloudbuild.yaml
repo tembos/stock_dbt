@@ -9,13 +9,6 @@ steps:
       - name: 'shared-volume'
         path: '/workspace1'
 
-  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        gcloud auth application-default login --quiet
-        
 
   - name: "gcr.io/cloud-builders/docker"
     args:
