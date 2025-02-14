@@ -15,14 +15,12 @@ steps:
       - '-c'
       - |
         export GOOGLE_APPLICATION_CREDENTIALS="/workspace/scotia_project_dbt/dbt_service_account.json"
-        dbt debug
-
+        dbt debug --config-dir /workspace/scotia_project_dbt
 
 timeout: 1200s
 
 images:
   - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-
 
 options:
   logging: CLOUD_LOGGING_ONLY

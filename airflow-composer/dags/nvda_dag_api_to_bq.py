@@ -24,10 +24,10 @@ batch_id = str(uuid.uuid4())  # Unique batch ID for tracking
 ingestion_datetime = pendulum.now("UTC")
 
 # secret
-client = secretmanager.SecretManagerServiceClient()
-secret_path = f"projects/{BIGQUERY_PROJECT}/secrets/apikey/versions/latest"
-response_secret = client.access_secret_version(name=secret_path)
-API_KEY = response_secret.payload.data.decode("UTF-8")
+# client = secretmanager.SecretManagerServiceClient()
+# secret_path = f"projects/{BIGQUERY_PROJECT}/secrets/apikey/versions/latest"
+# response_secret = client.access_secret_version(name=secret_path)
+# API_KEY = response_secret.payload.data.decode("UTF-8")
 
 # big query variables
 BIGQUERY_DATASET = "stocks_raw"
@@ -48,39 +48,39 @@ def fetch_and_store_parquet(**context):
     PROCESSED_PARQUET_PATH = f"processed/{SYMBOL}_data_{context['ds']}.parquet"
 
     base_url = "https://api.twelvedata.com/time_series"
-
-    params = {
-        "apikey": API_KEY,
-        "interval": "1min",
-        "format": "JSON",
-        "start_date": f"{context['ds']} 00:00:00",
-        "end_date": f"{context['ds']} 23:59:00",
-        "symbol": SYMBOL,
-    }
-    response = requests.get(base_url, params=params)
-
-    if response.status_code == 200:
-        data = response.json()
-        values_list = data.get("values", [])
-        meta_struct = data.get("meta", {})
-        df_values = pd.DataFrame(values_list)
-
-        df_values["meta"] = json.dumps(meta_struct)
-        df_values["ingestion_datetime_utc"] = ingestion_datetime
-        df_values["batch_id"] = batch_id
-
-        local_parquet_file = f"/tmp/{SYMBOL}_{context['ds']}.parquet"
-        df_values.to_parquet(local_parquet_file, engine="pyarrow")
-
-        gcs_hook = GCSHook()
-        gcs_hook.upload(bucket_name=GCS_BUCKET, object_name=PROCESSED_PARQUET_PATH, filename=local_parquet_file)
-
-        print(f"Processed Parquet stored in gs://{GCS_BUCKET}/{PROCESSED_PARQUET_PATH}")
-        return PROCESSED_PARQUET_PATH
-
-    else:
-        error_message = f"Error fetching data: {response.status_code}, {response.text}"
-        raise AirflowException(error_message)
+    #
+    # params = {
+    #     "apikey": API_KEY,
+    #     "interval": "1min",
+    #     "format": "JSON",
+    #     "start_date": f"{context['ds']} 00:00:00",
+    #     "end_date": f"{context['ds']} 23:59:00",
+    #     "symbol": SYMBOL,
+    # }
+    # response = requests.get(base_url, params=params)
+    #
+    # if response.status_code == 200:
+    #     data = response.json()
+    #     values_list = data.get("values", [])
+    #     meta_struct = data.get("meta", {})
+    #     df_values = pd.DataFrame(values_list)
+    #
+    #     df_values["meta"] = json.dumps(meta_struct)
+    #     df_values["ingestion_datetime_utc"] = ingestion_datetime
+    #     df_values["batch_id"] = batch_id
+    #
+    #     local_parquet_file = f"/tmp/{SYMBOL}_{context['ds']}.parquet"
+    #     df_values.to_parquet(local_parquet_file, engine="pyarrow")
+    #
+    #     gcs_hook = GCSHook()
+    #     gcs_hook.upload(bucket_name=GCS_BUCKET, object_name=PROCESSED_PARQUET_PATH, filename=local_parquet_file)
+    #
+    #     print(f"Processed Parquet stored in gs://{GCS_BUCKET}/{PROCESSED_PARQUET_PATH}")
+    #     return PROCESSED_PARQUET_PATH
+    #
+    # else:
+    #     error_message = f"Error fetching data: {response.status_code}, {response.text}"
+    #     raise AirflowException(error_message)
 
 
 api_to_gcs_task = PythonOperator(
