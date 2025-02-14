@@ -8,6 +8,7 @@ steps:
 
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     entrypoint: 'bash'
+    dir: "scotia_project_dbt"
     args:
       - '-c'
       - |
