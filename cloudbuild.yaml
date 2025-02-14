@@ -27,6 +27,7 @@ steps:
       - |
         cp /workspace1/dbt_service_account.json .
         export GOOGLE_APPLICATION_CREDENTIALS="/workspace1/dbt_service_account.json"
+        dbt deps
         dbt debug
         dbt seed --select source_nvda
         dbt run --select source_nvda
