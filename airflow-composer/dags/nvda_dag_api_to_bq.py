@@ -6,24 +6,23 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 import pandas as pd
 from airflow.exceptions import AirflowException
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
-
 from google.cloud import secretmanager
 import pendulum
+import os
 
 SYMBOL = "NVDA"
 
-# GCP variables
-BIGQUERY_PROJECT = "bigquerysheets-404104"
-GCS_BUCKET = "4353453453_data_stocks_scotia_project"
+# GCP variables from composer env
+BIGQUERY_PROJECT = os.environ.get("GCP_PROJECT")
+GCS_BUCKET = os.environ.get("BRONZE_BUCKET")
 
 # metadata ingestion
 batch_id = str(uuid.uuid4())  # Unique batch ID for tracking
-ingestion_datetime = pendulum.now("UTC") #.to_datetime_string()
+ingestion_datetime = pendulum.now("UTC")
 
 # secret
 client = secretmanager.SecretManagerServiceClient()
@@ -39,7 +38,7 @@ BQ_TABLE_PATH = f"{BIGQUERY_PROJECT}.{BIGQUERY_DATASET}.{BIGQUERY_TABLE}"
 
 dag = DAG(
     f"fetch_process_store_{SYMBOL.lower()}_data",
-    description="Fetch stock data as JSON, process to Parquet, store in GCS, create BQ table if needed, and load into BigQuery",
+    description="Fetch stock data as JSON, process to Parquet, store in GCS and insert into BigQuery",
     schedule_interval= "0 9 * * 1-5",
     start_date=pendulum.datetime(2025, 2, 6),
     catchup=True,
@@ -85,31 +84,6 @@ def fetch_and_store_parquet(**context):
         raise AirflowException(error_message)
 
 
-create_bq_table_task = BigQueryInsertJobOperator(
-    task_id="create_bq_table",
-    project_id=BIGQUERY_PROJECT,
-    configuration={
-        "query": {
-            "query": f"""
-            CREATE SCHEMA IF NOT EXISTS `{BIGQUERY_PROJECT}.{BIGQUERY_DATASET}`;
-                CREATE TABLE IF NOT EXISTS `{BQ_TABLE_PATH}` (
-                    datetime STRING,
-                    `open` STRING,
-                    high STRING,
-                    low STRING,
-                    `close` STRING,
-                    volume STRING,
-                    meta STRING,
-                    ingestion_datetime_utc STRING,
-                    batch_id STRING
-                );
-            """,
-            "useLegacySql": False,
-        }
-    },
-    dag=dag,
-)
-
 api_to_gcs_task = PythonOperator(
     task_id="fetch_parquet_task",
     python_callable=fetch_and_store_parquet,
@@ -139,4 +113,5 @@ run_dbt = KubernetesPodOperator(
     is_delete_operator_pod=True,
 )
 
-create_bq_table_task >> api_to_gcs_task >> gcs_to_bigquery_task>>run_dbt
+
+api_to_gcs_task >> gcs_to_bigquery_task>>run_dbt
