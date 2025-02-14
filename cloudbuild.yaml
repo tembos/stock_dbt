@@ -15,11 +15,11 @@ steps:
         export GOOGLE_APPLICATION_CREDENTIALS="/workspace/dbt_service_account.json"
         dbt debug --profiles-dir /workspace
 
-  - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-    dir: "scotia_project_dbt"
-    entrypoint: 'dbt'
-    args:
-      - "debug"
+#  - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
+#    dir: "scotia_project_dbt"
+#    entrypoint: 'dbt'
+#    args:
+#      - "debug"
 
 timeout: 1200s
 
