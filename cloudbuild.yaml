@@ -17,3 +17,6 @@ timeout: 1200s
 
 images:
   - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
