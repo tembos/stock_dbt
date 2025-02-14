@@ -4,22 +4,14 @@ steps:
     args:
       - '-c'
       - |
-        gcloud secrets versions access latest --secret="dbt_service_account" --format="json" > /secret/dbt_service_account.json
-
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'secrets'
-      - 'versions'
-      - 'access'
-      - 'latest'
-      - '--secret=dbt_service_account.json'
+        gcloud secrets versions access 1 --secret="dbt_service_account" --format="json" > /secret/dbt_service_account.json
 
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'auth'
       - 'activate-service-account'
       - 'dbt-service-account@bigquerysheets-404104.iam.gserviceaccount.com'
-      - '--key-file=/secret/dbt_service_account'
+      - '--key-file=/secret/dbt_service_account.json'
 
   - name: "gcr.io/cloud-builders/docker"
     args:
