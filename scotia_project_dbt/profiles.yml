@@ -5,7 +5,7 @@ scotia_project_dbt:
       dataset: stocks
       job_execution_timeout_seconds: 200
       job_retries: 1
-      impersonate_service_account: 479749472840-compute@developer.gserviceaccount.com
+      impersonate_service_account: dbt-service-account@bigquerysheets-404104.iam.gserviceaccount.com
 
       location: US
       method: oauth
