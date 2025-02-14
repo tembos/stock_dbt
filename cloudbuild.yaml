@@ -15,8 +15,6 @@ steps:
       - "-c"
       - |
         gcloud auth application-default login --quiet
-        gcloud auth list
-        gcloud projects list
         
 
   - name: "gcr.io/cloud-builders/docker"
@@ -29,8 +27,7 @@ steps:
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     entrypoint: 'bash'
     dir: "scotia_project_dbt"
-#    env:
-#      - 'GOOGLE_APPLICATION_CREDENTIALS=/workspace1/dbt_service_account.json'
+
     args:
       - '-c'
       - |
@@ -38,7 +35,7 @@ steps:
         cat dbt_service_account.json
         ls
         chmod 777 dbt_service_account.json
-        export GOOGLE_APPLICATION_CREDENTIALS="dbt_service_account.json"
+
 
         env
         dbt debug
