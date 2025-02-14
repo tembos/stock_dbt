@@ -4,9 +4,10 @@ steps:
     args:
       - '-c'
       - |
-        gcloud secrets versions access 1 --secret="dbt_service_account" --format="json" > /secret/dbt_service_account.json
-        gcloud auth activate-service-account dbt-service-account@bigquerysheets-404104.iam.gserviceaccount.com --key-file=/secret/dbt_service_account.json
-
+        gcloud secrets versions access 1 --secret="dbt_service_account" --format="json" > /workspace1/dbt_service_account.json
+    volumes:
+      - name: 'shared-volume'
+        path: '/workspace1'
 #  - name: 'gcr.io/cloud-builders/gcloud'
 #    args:
 #      - 'auth'
@@ -14,20 +15,25 @@ steps:
 #      - 'dbt-service-account@bigquerysheets-404104.iam.gserviceaccount.com'
 #      - '--key-file=/secret/dbt_service_account.json'
 
-#  - name: "gcr.io/cloud-builders/docker"
-#    args:
-#      - "build"
-#      - "-t"
-#      - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-#      - "scotia_project_dbt/"
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
+      - "scotia_project_dbt/"
 #
-#  - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-#    entrypoint: 'bash'
-#    dir: "scotia_project_dbt"
-#    args:
-#      - '-c'
-#      - |
-#        dbt debug
+  - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
+    entrypoint: 'bash'
+    dir: "scotia_project_dbt"
+    args:
+      - '-c'
+      - |
+        cp /workspace1/dbt_service_account.json .
+        ls
+        cat /workspace1/dbt_service_account.json
+    volumes:
+      - name: 'shared-volume'
+        path: '/workspace1'
 
 timeout: 1200s
 
