@@ -6,8 +6,18 @@ steps:
       - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
       - "scotia_project_dbt/"
 
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "$$DBT_SERVICE_ACCOUNT" > /workspace/dbt_service_account.json
+        export GOOGLE_APPLICATION_CREDENTIALS="/workspace/dbt_service_account.json"
+        dbt debug --profiles-dir /workspace
+
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     dir: "scotia_project_dbt"
+    entrypoint: 'dbt'
     args:
       - "debug"
 
