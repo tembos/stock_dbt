@@ -90,27 +90,27 @@ api_to_gcs_task = PythonOperator(
     provide_context=True,
 )
 
-gcs_to_bigquery_task = GCSToBigQueryOperator(
-    task_id="gcs_to_bigquery",
-    bucket=GCS_BUCKET,
-    source_objects=["processed/NVDA_data_{{ ds }}.parquet"],
-    destination_project_dataset_table=BQ_TABLE_PATH,
-    source_format="PARQUET",
-    write_disposition="WRITE_APPEND",
-    dag=dag,
-)
-
-run_dbt = KubernetesPodOperator(
-    namespace='composer-user-workloads',
-    image='gcr.io/bigquerysheets-404104/dbt-bigquery:latest',
-    cmds=["dbt"],
-    arguments=["run", "--warn-error", "--select", f"tag:{SYMBOL.lower()}"],
-    name=f'run-dbt-{SYMBOL.lower()}',
-    task_id=f'run_dbt_task_{SYMBOL.lower()}',
-    get_logs=True,
-    in_cluster=True,
-    is_delete_operator_pod=True,
-)
+# gcs_to_bigquery_task = GCSToBigQueryOperator(
+#     task_id="gcs_to_bigquery",
+#     bucket=GCS_BUCKET,
+#     source_objects=["processed/NVDA_data_{{ ds }}.parquet"],
+#     destination_project_dataset_table=BQ_TABLE_PATH,
+#     source_format="PARQUET",
+#     write_disposition="WRITE_APPEND",
+#     dag=dag,
+# )
+#
+# run_dbt = KubernetesPodOperator(
+#     namespace='composer-user-workloads',
+#     image='gcr.io/bigquerysheets-404104/dbt-bigquery:latest',
+#     cmds=["dbt"],
+#     arguments=["run", "--warn-error", "--select", f"tag:{SYMBOL.lower()}"],
+#     name=f'run-dbt-{SYMBOL.lower()}',
+#     task_id=f'run_dbt_task_{SYMBOL.lower()}',
+#     get_logs=True,
+#     in_cluster=True,
+#     is_delete_operator_pod=True,
+# )
 
 
 api_to_gcs_task # >> gcs_to_bigquery_task >> run_dbt
