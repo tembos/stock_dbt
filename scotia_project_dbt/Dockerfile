@@ -3,8 +3,8 @@ FROM python:3.9-slim
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
-    DBT_PROFILES_DIR=/scotia_project_dbt\
-    GOOGLE_APPLICATION_CREDENTIALS=dbt_service_account.json
+    DBT_PROFILES_DIR=/scotia_project_dbt
+#    GOOGLE_APPLICATION_CREDENTIALS=dbt_service_account.json
 
 # Set working directory in the container
 WORKDIR /scotia_project_dbt
