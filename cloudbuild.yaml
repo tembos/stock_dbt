@@ -22,6 +22,7 @@ steps:
     dir: "scotia_project_dbt"
     env:
       - "GOOGLE_APPLICATION_CREDENTIALS=/workspace1/dbt_service_account.json"
+    args:
       - '-c'
       - |
         cp /workspace1/dbt_service_account.json .
