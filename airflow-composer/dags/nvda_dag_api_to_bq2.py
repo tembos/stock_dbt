@@ -57,30 +57,30 @@ def fetch_and_store_parquet(**context):
         "end_date": f"{context['ds']} 23:59:00",
         "symbol": SYMBOL,
     }
-    response = requests.get(base_url, params=params)
-
-    if response.status_code == 200:
-        data = response.json()
-        values_list = data.get("values", [])
-        meta_struct = data.get("meta", {})
-        df_values = pd.DataFrame(values_list)
-
-        df_values["meta"] = json.dumps(meta_struct)
-        df_values["ingestion_datetime_utc"] = ingestion_datetime
-        df_values["batch_id"] = batch_id
-
-        local_parquet_file = f"/tmp/{SYMBOL}_{context['ds']}.parquet"
-        df_values.to_parquet(local_parquet_file, engine="pyarrow")
-
-        gcs_hook = GCSHook()
-        gcs_hook.upload(bucket_name=GCS_BUCKET, object_name=PROCESSED_PARQUET_PATH, filename=local_parquet_file)
-
-        print(f"Processed Parquet stored in gs://{GCS_BUCKET}/{PROCESSED_PARQUET_PATH}")
-        return PROCESSED_PARQUET_PATH
-
-    else:
-        error_message = f"Error fetching data: {response.status_code}, {response.text}"
-        raise AirflowException(error_message)
+    # response = requests.get(base_url, params=params)
+    #
+    # if response.status_code == 200:
+    #     data = response.json()
+    #     values_list = data.get("values", [])
+    #     meta_struct = data.get("meta", {})
+    #     df_values = pd.DataFrame(values_list)
+    #
+    #     df_values["meta"] = json.dumps(meta_struct)
+    #     df_values["ingestion_datetime_utc"] = ingestion_datetime
+    #     df_values["batch_id"] = batch_id
+    #
+    #     local_parquet_file = f"/tmp/{SYMBOL}_{context['ds']}.parquet"
+    #     df_values.to_parquet(local_parquet_file, engine="pyarrow")
+    #
+    #     gcs_hook = GCSHook()
+    #     gcs_hook.upload(bucket_name=GCS_BUCKET, object_name=PROCESSED_PARQUET_PATH, filename=local_parquet_file)
+    #
+    #     print(f"Processed Parquet stored in gs://{GCS_BUCKET}/{PROCESSED_PARQUET_PATH}")
+    #     return PROCESSED_PARQUET_PATH
+    #
+    # else:
+    #     error_message = f"Error fetching data: {response.status_code}, {response.text}"
+    #     raise AirflowException(error_message)
 
 
 api_to_gcs_task = PythonOperator(
@@ -90,15 +90,15 @@ api_to_gcs_task = PythonOperator(
     provide_context=True,
 )
 
-gcs_to_bigquery_task = GCSToBigQueryOperator(
-    task_id="gcs_to_bigquery",
-    bucket=GCS_BUCKET,
-    source_objects=["processed/NVDA_data_{{ ds }}.parquet"],
-    destination_project_dataset_table=BQ_TABLE_PATH,
-    source_format="PARQUET",
-    write_disposition="WRITE_APPEND",
-    dag=dag,
-)
+# gcs_to_bigquery_task = GCSToBigQueryOperator(
+#     task_id="gcs_to_bigquery",
+#     bucket=GCS_BUCKET,
+#     source_objects=["processed/NVDA_data_{{ ds }}.parquet"],
+#     destination_project_dataset_table=BQ_TABLE_PATH,
+#     source_format="PARQUET",
+#     write_disposition="WRITE_APPEND",
+#     dag=dag,
+# )
 
 # run_dbt = KubernetesPodOperator(
 #     namespace='composer-user-workloads',

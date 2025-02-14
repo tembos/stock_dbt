@@ -12,7 +12,7 @@ steps:
       - 'auth'
       - 'activate-service-account'
       - 'dbt-service-account@bigquerysheets-404104.iam.gserviceaccount.com'
-      - '--key-file=/secret/dbt_service_account.json'
+      - '--key-file=/secret/dbt_service_account'
 
   - name: "gcr.io/cloud-builders/docker"
     args:
