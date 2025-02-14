@@ -14,9 +14,7 @@ steps:
     args:
       - '-c'
       - |
-        echo "Checking if GOOGLE_APPLICATION_CREDENTIALS is set..."
-        echo "Env Variable: $GOOGLE_APPLICATION_CREDENTIALS"
-        ls -lah /scotia_project_dbt/dbt_service_account.json
+        ls 
         cat /scotia_project_dbt/dbt_service_account.json
 
 timeout: 1200s
