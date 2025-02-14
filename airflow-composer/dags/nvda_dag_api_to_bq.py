@@ -23,7 +23,7 @@ GCS_BUCKET = "4353453453_data_stocks_scotia_project"
 
 # metadata ingestion
 batch_id = str(uuid.uuid4())  # Unique batch ID for tracking
-ingestion_datetime = pendulum.now("UTC").to_datetime_string()
+ingestion_datetime = pendulum.now("UTC") #.to_datetime_string()
 
 # secret
 client = secretmanager.SecretManagerServiceClient()
