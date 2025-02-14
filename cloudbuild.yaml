@@ -6,7 +6,7 @@ steps:
       - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
       - "scotia_project_dbt/"
 
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     entrypoint: 'bash'
     args:
       - '-c'
