@@ -5,7 +5,7 @@ scotia_project_dbt:
       dataset: stocks
       job_execution_timeout_seconds: 200
       job_retries: 1
-      keyfile: /workspace/scotia_project_dbt/dbt_service_account.json
+#      keyfile: /workspace/scotia_project_dbt/dbt_service_account.json
       location: US
       method: service-account
       priority: interactive

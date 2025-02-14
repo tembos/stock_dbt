@@ -24,11 +24,11 @@ batch_id = str(uuid.uuid4())  # Unique batch ID for tracking
 ingestion_datetime = pendulum.now("UTC")
 
 # secret
-client = secretmanager.SecretManagerServiceClient()
-secret_path = f"projects/{BIGQUERY_PROJECT}/secrets/apikey/versions/latest"
-response_secret = client.access_secret_version(name=secret_path)
-API_KEY = response_secret.payload.data.decode("UTF-8")
-
+# client = secretmanager.SecretManagerServiceClient()
+# secret_path = f"projects/{BIGQUERY_PROJECT}/secrets/apikey/versions/latest"
+# response_secret = client.access_secret_version(name=secret_path)
+# API_KEY = response_secret.payload.data.decode("UTF-8")
+API_KEY = "11fe15e0a18a4651ae0797be7a823a3a"
 # big query variables
 BIGQUERY_DATASET = "stocks_raw"
 BIGQUERY_TABLE = f"source_{SYMBOL.lower()}"
