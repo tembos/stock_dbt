@@ -9,14 +9,14 @@ steps:
       - name: 'shared-volume'
         path: '/workspace1'
 
-  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        gcloud auth activate-service-account \
-          --impersonate-service-account=479749472840-compute@developer.gserviceaccount.com
-        gcloud auth list
+#  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+#    entrypoint: "bash"
+#    args:
+#      - "-c"
+#      - |
+#        gcloud auth activate-service-account \
+#          --impersonate-service-account=479749472840-compute@developer.gserviceaccount.com
+#        gcloud auth list
 
   - name: "gcr.io/cloud-builders/docker"
     args:
