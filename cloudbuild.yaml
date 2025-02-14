@@ -8,12 +8,16 @@ steps:
     volumes:
       - name: 'shared-volume'
         path: '/workspace1'
-#  - name: 'gcr.io/cloud-builders/gcloud'
-#    args:
-#      - 'auth'
-#      - 'activate-service-account'
-#      - 'dbt-service-account@bigquerysheets-404104.iam.gserviceaccount.com'
-#      - '--key-file=/secret/dbt_service_account.json'
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud auth application-default login
+        gcloud auth list
+        gcloud projects list
+        
 
   - name: "gcr.io/cloud-builders/docker"
     args:
