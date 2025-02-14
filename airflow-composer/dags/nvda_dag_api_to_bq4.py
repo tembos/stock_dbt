@@ -13,7 +13,7 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from google.cloud import secretmanager
 import pendulum
 
-SYMBOL = "NVDA" #add
+SYMBOL = "NVDA" #add k
 
 # GCP variables from composer env
 BIGQUERY_PROJECT = "bigquerysheets-404104"
