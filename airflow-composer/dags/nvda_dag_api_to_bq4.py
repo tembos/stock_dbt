@@ -24,11 +24,11 @@ batch_id = str(uuid.uuid4())  # Unique batch ID for tracking
 ingestion_datetime = pendulum.now("UTC")
 
 # secret
-# client = secretmanager.SecretManagerServiceClient()
-# secret_path = f"projects/{BIGQUERY_PROJECT}/secrets/apikey/versions/latest"
-# response_secret = client.access_secret_version(name=secret_path)
-# API_KEY = response_secret.payload.data.decode("UTF-8")
-API_KEY = "11fe15e0a18a4651ae0797be7a823a3a"
+client = secretmanager.SecretManagerServiceClient()
+secret_path = f"projects/{BIGQUERY_PROJECT}/secrets/apikey/versions/latest"
+response_secret = client.access_secret_version(name=secret_path)
+API_KEY = response_secret.payload.data.decode("UTF-8")
+
 # big query variables
 BIGQUERY_DATASET = "stocks_raw"
 BIGQUERY_TABLE = f"source_{SYMBOL.lower()}"
@@ -36,7 +36,7 @@ BQ_TABLE_PATH = f"{BIGQUERY_PROJECT}.{BIGQUERY_DATASET}.{BIGQUERY_TABLE}"
 
 
 dag = DAG(
-    f"fetch_process_store_{SYMBOL.lower()}_data_to_bronze4",
+    f"fetch_process_store_{SYMBOL.lower()}_data_to_bronze",
     description="Fetch stock data as JSON, process to Parquet, store in GCS and insert into BigQuery",
     schedule_interval= "0 9 * * 1-5",
     start_date=pendulum.datetime(2025, 2, 12),
@@ -44,7 +44,7 @@ dag = DAG(
 )
 
 
-def fetch_and_store_parquet3(**context):
+def fetch_and_store_parquet(**context):
     PROCESSED_PARQUET_PATH = f"processed/{SYMBOL}_data_{context['ds']}.parquet"
 
     base_url = "https://api.twelvedata.com/time_series"
@@ -85,7 +85,7 @@ def fetch_and_store_parquet3(**context):
 
 api_to_gcs_task = PythonOperator(
     task_id="fetch_parquet_task1",
-    python_callable=fetch_and_store_parquet3,
+    python_callable=fetch_and_store_parquet,
     dag=dag,
     provide_context=True,
 )
@@ -100,19 +100,18 @@ gcs_to_bigquery_task = GCSToBigQueryOperator(
     dag=dag,
 )
 
-# run_dbt = KubernetesPodOperator(
-#     namespace='composer-user-workloads',
-#     image='gcr.io/bigquerysheets-404104/dbt-bigquery:latest',
-#     cmds=["dbt"],
-#     arguments=["run", "--warn-error", "--select", f"tag:{SYMBOL.lower()}"],
-#     name=f'run-dbt-{SYMBOL.lower()}',
-#     task_id=f'run_dbt_task_{SYMBOL.lower()}',
-#     get_logs=True,
-#     in_cluster=True,
-#     is_delete_operator_pod=True,
-# )
+run_dbt = KubernetesPodOperator(
+    namespace='composer-user-workloads',
+    image='gcr.io/bigquerysheets-404104/dbt-bigquery:latest',
+    cmds=["dbt"],
+    arguments=["run", "--warn-error", "--select", f"tag:{SYMBOL.lower()}"],
+    name=f'run-dbt-{SYMBOL.lower()}',
+    task_id=f'run_dbt_task_{SYMBOL.lower()}',
+    get_logs=True,
+    in_cluster=True,
+    is_delete_operator_pod=True,
+)
 
 
-api_to_gcs_task >> gcs_to_bigquery_task
+api_to_gcs_task >> gcs_to_bigquery_task >> run_dbt
 
-# >> gcs_to_bigquery_task >> run_dbt
