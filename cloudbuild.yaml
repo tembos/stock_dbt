@@ -1,11 +1,18 @@
 steps:
   - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret="dbt-service-account-key" --format="json" > /secret/dbt_service_account.json
+
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'secrets'
       - 'versions'
       - 'access'
       - 'latest'
-      - '--secret=dbt_service_account'
+      - '--secret=dbt_service_account.json'
 
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
