@@ -8,7 +8,7 @@ from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 import pandas as pd
 from airflow.exceptions import AirflowException
-from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+# from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
 from google.cloud import secretmanager
 import pendulum
@@ -100,17 +100,17 @@ gcs_to_bigquery_task = GCSToBigQueryOperator(
     dag=dag,
 )
 
-run_dbt = KubernetesPodOperator(
-    namespace='composer-user-workloads',
-    image='gcr.io/bigquerysheets-404104/dbt-bigquery:latest',
-    cmds=["dbt"],
-    arguments=["run", "--warn-error", "--select", f"tag:{SYMBOL.lower()}"],
-    name=f'run-dbt-{SYMBOL.lower()}',
-    task_id=f'run_dbt_task_{SYMBOL.lower()}',
-    get_logs=True,
-    in_cluster=True,
-    is_delete_operator_pod=True,
-)
+# run_dbt = KubernetesPodOperator(
+#     namespace='composer-user-workloads',
+#     image='gcr.io/bigquerysheets-404104/dbt-bigquery:latest',
+#     cmds=["dbt"],
+#     arguments=["run", "--warn-error", "--select", f"tag:{SYMBOL.lower()}"],
+#     name=f'run-dbt-{SYMBOL.lower()}',
+#     task_id=f'run_dbt_task_{SYMBOL.lower()}',
+#     get_logs=True,
+#     in_cluster=True,
+#     is_delete_operator_pod=True,
+# )
 
 
 api_to_gcs_task # >> gcs_to_bigquery_task >> run_dbt

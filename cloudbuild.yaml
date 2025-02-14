@@ -1,4 +1,19 @@
 steps:
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'secrets'
+      - 'versions'
+      - 'access'
+      - 'latest'
+      - '--secret=dbt_service_account'
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'auth'
+      - 'activate-service-account'
+      - 'dbt-service-account@bigquerysheets-404104.iam.gserviceaccount.com'
+      - '--key-file=/secret/dbt_service_account.json'
+
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
@@ -6,24 +21,12 @@ steps:
       - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
       - "scotia_project_dbt/"
 
-  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        gcloud auth application-default login --quiet
-
-
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     entrypoint: 'bash'
     dir: "scotia_project_dbt"
-    env:
-      - "GOOGLE_APPLICATION_CREDENTIALS=/scotia_project_dbt/dbt_service_account.json"
     args:
       - '-c'
       - |
-        gcloud auth application-default login --quiet
-        ls 
         dbt debug
 
 timeout: 1200s
