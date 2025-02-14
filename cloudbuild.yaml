@@ -25,12 +25,15 @@ steps:
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     entrypoint: 'bash'
     dir: "scotia_project_dbt"
+    env:
+      - 'GOOGLE_APPLICATION_CREDENTIALS=/dbt_service_account.json'
     args:
       - '-c'
       - |
         cp /workspace1/dbt_service_account.json .
         ls
         cat /workspace1/dbt_service_account.json
+        dbt debug
     volumes:
       - name: 'shared-volume'
         path: '/workspace1'

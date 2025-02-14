@@ -113,4 +113,6 @@ api_to_gcs_task = PythonOperator(
 # )
 
 
-api_to_gcs_task # >> gcs_to_bigquery_task >> run_dbt
+api_to_gcs_task
+
+# >> gcs_to_bigquery_task >> run_dbt
