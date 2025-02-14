@@ -1,0 +1,19 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
+      - "dbt/"
+
+  - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        dbt debug --profiles-dir /dbt
+
+timeout: 1200s
+
+images:
+  - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"

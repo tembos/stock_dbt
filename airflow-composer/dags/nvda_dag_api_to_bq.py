@@ -8,7 +8,7 @@ from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 import pandas as pd
 from airflow.exceptions import AirflowException
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
 from google.cloud import secretmanager
 import pendulum
@@ -17,8 +17,8 @@ import os
 SYMBOL = "NVDA"
 
 # GCP variables from composer env
-BIGQUERY_PROJECT = os.environ.get("GCP_PROJECT")
-GCS_BUCKET = os.environ.get("BRONZE_BUCKET")
+BIGQUERY_PROJECT = "bigquerysheets-404104" # os.environ.get("GCP_PROJECT")
+GCS_BUCKET = "4353453453_data_stocks_scotia_project"  #os.environ.get("BRONZE_BUCKET")
 
 # metadata ingestion
 batch_id = str(uuid.uuid4())  # Unique batch ID for tracking
@@ -37,7 +37,7 @@ BQ_TABLE_PATH = f"{BIGQUERY_PROJECT}.{BIGQUERY_DATASET}.{BIGQUERY_TABLE}"
 
 
 dag = DAG(
-    f"fetch_process_store_{SYMBOL.lower()}_data",
+    f"fetch_process_store_{SYMBOL.lower()}_data_to_bronze",
     description="Fetch stock data as JSON, process to Parquet, store in GCS and insert into BigQuery",
     schedule_interval= "0 9 * * 1-5",
     start_date=pendulum.datetime(2025, 2, 6),
