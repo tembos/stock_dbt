@@ -20,3 +20,4 @@ images:
 
 options:
   logging: CLOUD_LOGGING_ONLY
+  logsBucket: "gs://3274923874-log-cloudbuild-dbt"
