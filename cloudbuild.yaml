@@ -10,11 +10,11 @@ steps:
     entrypoint: 'bash'
     dir: "scotia_project_dbt"
     env:
-      - "GOOGLE_APPLICATION_CREDENTIALS=/workspace/scotia_project_dbt/dbt_service_account.json"
+      - "GOOGLE_APPLICATION_CREDENTIALS=/scotia_project_dbt/dbt_service_account.json"
     args:
       - '-c'
       - |
-        export GOOGLE_APPLICATION_CREDENTIALS="/workspace/scotia_project_dbt/dbt_service_account.json"
+        export GOOGLE_APPLICATION_CREDENTIALS="/scotia_project_dbt/dbt_service_account.json"
         dbt debug 
 
 timeout: 1200s
