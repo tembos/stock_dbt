@@ -11,7 +11,6 @@ steps:
     args:
       - '-c'
       - |
-        echo "$DBT_SERVICE_ACCOUNT" > /workspace/dbt_service_account.json
         export GOOGLE_APPLICATION_CREDENTIALS="/workspace/dbt_service_account.json"
         dbt debug --profiles-dir /workspace
 
