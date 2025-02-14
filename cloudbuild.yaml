@@ -6,6 +6,17 @@ steps:
       - "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
       - "scotia_project_dbt/"
 
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud auth application-default login --quiet
+        gcloud auth application-default print-access-token
+        gcloud config set project bigquerysheets-404104
+        gcloud auth list
+
+
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
     entrypoint: 'bash'
     dir: "scotia_project_dbt"
@@ -14,8 +25,9 @@ steps:
     args:
       - '-c'
       - |
+        gcloud auth application-default login --quiet
         ls 
-        cat /scotia_project_dbt/dbt_service_account.json
+        dbt debug
 
 timeout: 1200s
 
