@@ -7,7 +7,7 @@ steps:
         gcloud secrets versions access 1 --secret="dbt_service_account" --format="json" > /workspace1/dbt_service_account.json
 
     volumes:
-      - name: 'shared-volume'
+      - name: 'volume'
         path: '/workspace1'
 
 #  - name: "gcr.io/cloud-builders/docker"
@@ -21,12 +21,11 @@ steps:
     entrypoint: 'bash'
     dir: "scotia_project_dbt"
     env:
-      - "GOOGLE_APPLICATION_CREDENTIALS=/workspace1/dbt_service_account.json"  # ✅ Set Service Account JSON path
-    args:
+      - "GOOGLE_APPLICATION_CREDENTIALS=/workspace1/dbt_service_account.json"
       - '-c'
       - |
         cp /workspace1/dbt_service_account.json .
-        export GOOGLE_APPLICATION_CREDENTIALS="/workspace1/dbt_service_account.json"
+        export GOOGLE_APPLICATION_CREDENTIALS="dbt_service_account.json"
         dbt deps
         dbt debug
         dbt seed --select source_nvda
@@ -36,7 +35,7 @@ steps:
         dbt test --select dwh_vs_expected --store-failures
 
     volumes:
-      - name: 'shared-volume'
+      - name: 'volume'
         path: '/workspace1'
 
   - name: 'gcr.io/cloud-builders/gsutil'
