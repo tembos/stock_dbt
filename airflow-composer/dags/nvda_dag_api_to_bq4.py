@@ -8,7 +8,7 @@ from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 import pandas as pd
 from airflow.exceptions import AirflowException
-# from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
 from google.cloud import secretmanager
 import pendulum
@@ -36,7 +36,7 @@ BQ_TABLE_PATH = f"{BIGQUERY_PROJECT}.{BIGQUERY_DATASET}.{BIGQUERY_TABLE}"
 
 
 dag = DAG(
-    f"fetch_process_store_{SYMBOL.lower()}_data_to_bronze3",
+    f"fetch_process_store_{SYMBOL.lower()}_data_to_bronze4",
     description="Fetch stock data as JSON, process to Parquet, store in GCS and insert into BigQuery",
     schedule_interval= "0 9 * * 1-5",
     start_date=pendulum.datetime(2025, 2, 12),
@@ -44,7 +44,7 @@ dag = DAG(
 )
 
 
-def fetch_and_store_parquet2(**context):
+def fetch_and_store_parquet3(**context):
     PROCESSED_PARQUET_PATH = f"processed/{SYMBOL}_data_{context['ds']}.parquet"
 
     base_url = "https://api.twelvedata.com/time_series"
@@ -85,20 +85,20 @@ def fetch_and_store_parquet2(**context):
 
 api_to_gcs_task = PythonOperator(
     task_id="fetch_parquet_task1",
-    python_callable=fetch_and_store_parquet2,
+    python_callable=fetch_and_store_parquet3,
     dag=dag,
     provide_context=True,
 )
 
-# gcs_to_bigquery_task = GCSToBigQueryOperator(
-#     task_id="gcs_to_bigquery",
-#     bucket=GCS_BUCKET,
-#     source_objects=["processed/NVDA_data_{{ ds }}.parquet"],
-#     destination_project_dataset_table=BQ_TABLE_PATH,
-#     source_format="PARQUET",
-#     write_disposition="WRITE_APPEND",
-#     dag=dag,
-# )
+gcs_to_bigquery_task = GCSToBigQueryOperator(
+    task_id="gcs_to_bigquery",
+    bucket=GCS_BUCKET,
+    source_objects=["processed/NVDA_data_{{ ds }}.parquet"],
+    destination_project_dataset_table=BQ_TABLE_PATH,
+    source_format="PARQUET",
+    write_disposition="WRITE_APPEND",
+    dag=dag,
+)
 
 # run_dbt = KubernetesPodOperator(
 #     namespace='composer-user-workloads',
@@ -113,6 +113,6 @@ api_to_gcs_task = PythonOperator(
 # )
 
 
-api_to_gcs_task
+api_to_gcs_task >> gcs_to_bigquery_task
 
 # >> gcs_to_bigquery_task >> run_dbt
