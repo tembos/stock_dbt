@@ -22,4 +22,4 @@ RUN pip install dbt-bigquery
 COPY . /scotia_project_dbt
 
 # Ensure the entrypoint runs dbt commands
-#ENTRYPOINT ["dbt"]
+ENTRYPOINT ["dbt"]

@@ -41,9 +41,6 @@ models:
       ohlc_nvda:
         tags: ['nvda']
 
-#    expected_data:
-#      +schema: warehouse
-#      +enabled: "{{ target.name == 'dev' }}"
 
     test:
       +schema: dbt_test_failures
