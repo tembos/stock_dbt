@@ -36,15 +36,15 @@ BQ_TABLE_PATH = f"{BIGQUERY_PROJECT}.{BIGQUERY_DATASET}.{BIGQUERY_TABLE}"
 
 
 dag = DAG(
-    f"fetch_process_store_{SYMBOL.lower()}_data_to_bronze2",
+    f"fetch_process_store_{SYMBOL.lower()}_data_to_bronze3",
     description="Fetch stock data as JSON, process to Parquet, store in GCS and insert into BigQuery",
     schedule_interval= "0 9 * * 1-5",
-    start_date=pendulum.datetime(2025, 2, 6),
+    start_date=pendulum.datetime(2025, 2, 12),
     catchup=True,
 )
 
 
-def fetch_and_store_parquet(**context):
+def fetch_and_store_parquet2(**context):
     PROCESSED_PARQUET_PATH = f"processed/{SYMBOL}_data_{context['ds']}.parquet"
 
     base_url = "https://api.twelvedata.com/time_series"
@@ -57,35 +57,35 @@ def fetch_and_store_parquet(**context):
         "end_date": f"{context['ds']} 23:59:00",
         "symbol": SYMBOL,
     }
-    # response = requests.get(base_url, params=params)
-    #
-    # if response.status_code == 200:
-    #     data = response.json()
-    #     values_list = data.get("values", [])
-    #     meta_struct = data.get("meta", {})
-    #     df_values = pd.DataFrame(values_list)
-    #
-    #     df_values["meta"] = json.dumps(meta_struct)
-    #     df_values["ingestion_datetime_utc"] = ingestion_datetime
-    #     df_values["batch_id"] = batch_id
-    #
-    #     local_parquet_file = f"/tmp/{SYMBOL}_{context['ds']}.parquet"
-    #     df_values.to_parquet(local_parquet_file, engine="pyarrow")
-    #
-    #     gcs_hook = GCSHook()
-    #     gcs_hook.upload(bucket_name=GCS_BUCKET, object_name=PROCESSED_PARQUET_PATH, filename=local_parquet_file)
-    #
-    #     print(f"Processed Parquet stored in gs://{GCS_BUCKET}/{PROCESSED_PARQUET_PATH}")
-    #     return PROCESSED_PARQUET_PATH
-    #
-    # else:
-    #     error_message = f"Error fetching data: {response.status_code}, {response.text}"
-    #     raise AirflowException(error_message)
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        values_list = data.get("values", [])
+        meta_struct = data.get("meta", {})
+        df_values = pd.DataFrame(values_list)
+
+        df_values["meta"] = json.dumps(meta_struct)
+        df_values["ingestion_datetime_utc"] = ingestion_datetime
+        df_values["batch_id"] = batch_id
+
+        local_parquet_file = f"/tmp/{SYMBOL}_{context['ds']}.parquet"
+        df_values.to_parquet(local_parquet_file, engine="pyarrow")
+
+        gcs_hook = GCSHook()
+        gcs_hook.upload(bucket_name=GCS_BUCKET, object_name=PROCESSED_PARQUET_PATH, filename=local_parquet_file)
+
+        print(f"Processed Parquet stored in gs://{GCS_BUCKET}/{PROCESSED_PARQUET_PATH}")
+        return PROCESSED_PARQUET_PATH
+
+    else:
+        error_message = f"Error fetching data: {response.status_code}, {response.text}"
+        raise AirflowException(error_message)
 
 
 api_to_gcs_task = PythonOperator(
-    task_id="fetch_parquet_task",
-    python_callable=fetch_and_store_parquet,
+    task_id="fetch_parquet_task1",
+    python_callable=fetch_and_store_parquet2,
     dag=dag,
     provide_context=True,
 )
