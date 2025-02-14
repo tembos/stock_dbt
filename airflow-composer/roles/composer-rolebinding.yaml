@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: composer-rolebinding
+  namespace: composer-user-workloads
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: composer-2-10-2-airflow-2-10-2-d7105b53
+roleRef:
+  kind: Role
+  name: composer-role
+  apiGroup: rbac.authorization.k8s.io
