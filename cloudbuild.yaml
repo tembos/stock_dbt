@@ -4,7 +4,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud secrets versions access latest --secret="dbt-service-account" --format="json" > /secret/dbt_service_account.json
+        gcloud secrets versions access latest --secret="dbt_service_account" --format="json" > /secret/dbt_service_account.json
 
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
