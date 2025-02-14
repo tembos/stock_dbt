@@ -7,11 +7,9 @@ steps:
       - "scotia_project_dbt/"
 
   - name: "gcr.io/bigquerysheets-404104/dbt-bigquery:latest"
-    entrypoint: "bash"
+    entrypoint: "dbt"
     args:
-      - "-c"
-      - |
-        dbt debug --profiles-dir /dbt
+      - "debug"
 
 timeout: 1200s
 
