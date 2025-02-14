@@ -12,7 +12,7 @@ steps:
       - '-c'
       - |
         export GOOGLE_APPLICATION_CREDENTIALS="/workspace/dbt_service_account.json"
-        dbt debug --profiles-dir /workspace
+        dbt debug
 
 
 timeout: 1200s
